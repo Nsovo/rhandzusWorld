@@ -1,21 +1,20 @@
-// src/Header.tsx
-
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import Menu from './Menu';
 
 interface HeaderProps {
   title?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title }) => {
+const Header: React.FC<HeaderProps> = ({title}) => {
   return (
-    
     <View style={styles.header}>
-        <Menu />
-
+      {/* <Menu /> */}
       <Text style={styles.headerText}>{title}</Text>
-      <Image source={require('../assets/love.png')} style={styles.headerImage} />
+      <Image
+        source={require('../assets/love.png')}
+        style={styles.headerImage}
+      />
     </View>
   );
 };
@@ -28,10 +27,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#6E276C',
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
   headerText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 32,
+    fontWeight: '700',
   },
   headerImage: {
     width: 50,

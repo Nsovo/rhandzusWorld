@@ -40,7 +40,6 @@ const Home: React.FC<HomeProps> = ({ navigation }) => {
         <Header />
         <View style={styles.formContainer}>
           <Text style={styles.h1}>Welcome to Rhandzu's world</Text>
-          <View style={styles.spacing} />
           <View style={styles.slideContainer}>
           <SlideWithAutoPlay />
           </View>
@@ -75,18 +74,13 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
-  spacing: {
-    // height: 20, // Adjust spacing as needed
-  },
   slideContainer: {
-    height: 350,
     width: '100%',
-    // marginTop: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
+     marginTop: -8,
     marginRight: 20,
   },
   button: {

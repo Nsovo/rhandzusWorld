@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   SafeAreaView,
@@ -20,40 +20,38 @@ import Menu from './Menu';
 const WordSound: React.FC<WordSoundProps> = ({navigation, route}) => {
   const isDarkMode = useColorScheme() === 'dark';
   const [textToSpeak, setTextToSpeak] = useState('Enter text to speak');
-  const [showMenu, setShowMenu] = useState(false); // State to toggle menu visibility
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : '#8F4F9F',
   };
 
   useEffect(() => {
-    // Initialize TTS engine and add event listeners
+    const onTtsStart = () => {
+      console.log('TTS started');
+    };
+
+    const onTtsFinish = () => {
+      console.log('TTS finished');
+    };
+
+    const onTtsCancel = () => {
+      console.log('TTS cancelled');
+    };
+
     Tts.setDefaultLanguage('en-US');
     Tts.setDefaultRate(0.5);
     Tts.setDefaultPitch(1.0);
+
     Tts.addEventListener('tts-start', onTtsStart);
     Tts.addEventListener('tts-finish', onTtsFinish);
     Tts.addEventListener('tts-cancel', onTtsCancel);
 
     return () => {
-      // Clean up event listeners
       Tts.removeEventListener('tts-start', onTtsStart);
       Tts.removeEventListener('tts-finish', onTtsFinish);
       Tts.removeEventListener('tts-cancel', onTtsCancel);
     };
   }, []);
-
-  const onTtsStart = () => {
-    console.log('TTS started');
-  };
-
-  const onTtsFinish = () => {
-    console.log('TTS finished');
-  };
-
-  const onTtsCancel = () => {
-    console.log('TTS cancelled');
-  };
 
   const speakText = (text: string) => {
     Tts.stop();
@@ -68,15 +66,15 @@ const WordSound: React.FC<WordSoundProps> = ({navigation, route}) => {
     {text: "I can't hear you"},
   ];
 
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
-  const menuItems = [
-    {text: 'Option 1', action: () => console.log('Option 1 selected')},
-    {text: 'Option 2', action: () => console.log('Option 2 selected')},
-    {text: 'Option 3', action: () => console.log('Option 3 selected')},
-  ];
+  const renderItem = ({item, index}: {item: {text: string}; index: number}) => (
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => speakText(item.text)}>
+        <Text style={styles.buttonText}>{item.text}</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <SafeAreaView style={[styles.container, backgroundStyle]}>
@@ -84,25 +82,22 @@ const WordSound: React.FC<WordSoundProps> = ({navigation, route}) => {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={[styles.container, backgroundStyle]}>
-        <Header />
+        <Header title="Play a sound" />
+        <Menu />
+
         <View style={styles.formContainer}>
-          <Text style={styles.h1}>Play a sound</Text>
+          <Text style={styles.text}>
+            Click a button below to play a word sound, or enter your own text to
+            speak
+          </Text>
           <FlatList
             data={wordsToSound}
-            renderItem={({item, index}) => (
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={() => speakText(item.text)}>
-                  <Text style={styles.buttonText}>{item.text}</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
+            style={styles.flatList}
           />
           <View style={styles.inputContainer}>
             <TextInput
@@ -133,7 +128,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    marginBottom: 20,
     borderColor: 'orange',
     borderWidth: 2,
     borderRadius: 5,
@@ -156,20 +150,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF6347',
     borderRadius: 5,
   },
-  h1: {
-    fontSize: 32,
-    fontWeight: '700',
+  text: {
+    fontSize: 18,
+    fontWeight: 'normal',
     color: 'white',
     textAlign: 'center',
-    marginBottom: 20,
   },
   formContainer: {
     backgroundColor: '#8F4F9F',
     padding: 20,
     alignItems: 'center',
-  },
-  spacing: {
-    marginBottom: 20,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -189,35 +179,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  menuToggle: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  menuToggleText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  menu: {
-    marginTop: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 5,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    width: '100%',
-  },
-  menuItem: {
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  menuItemText: {
-    fontSize: 16,
-    color: '#333',
+  flatList: {
+    marginBottom: 20,
   },
 });
 
