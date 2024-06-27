@@ -44,3 +44,7 @@ deps: node pods gems
 
 .PHONY: clean
 clean: clean/gems clean/node clean/pods
+
+.PHONY: start
+start:
+	yarn start
